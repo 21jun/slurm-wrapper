@@ -35,6 +35,16 @@ def main():
     parser.add_argument('command', nargs=argparse.REMAINDER, help='Command to run')
     args = parser.parse_args()
 
+    # Scan for .sb file and use as command prefix if present
+    prefix = ''
+    try:
+        with open('.sb', 'r') as f:
+            prefix = f.read().strip()
+    except FileNotFoundError:
+        pass
+    if prefix:
+        prefix = prefix.replace('{num_gpus}', str(args.num_gpus))
+
     if args.partition == 'A100-80GB':
         queue_line = '#SBATCH -q hpgpu'
     elif args.partition == '4A100':
@@ -46,7 +56,10 @@ def main():
         print('Error: You must provide a command to run.')
         sys.exit(1)
 
-    date_str = datetime.now().strftime('%Y%m%d_%H%M%S')
+    date_str = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+
+    # Prepend prefix to command if present
+    full_command = (prefix + ' ' if prefix else '') + ' '.join(args.command)
 
     script = SLURM_TEMPLATE.format(
         job_name=args.job_name,
@@ -56,7 +69,7 @@ def main():
         partition=args.partition,
         queue_line=queue_line,
         extra=args.extra,
-        command=' '.join(args.command),
+        command=full_command,
         date_str=date_str
     )
 
