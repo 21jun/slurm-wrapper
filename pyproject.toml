@@ -1,0 +1,13 @@
+[project]
+name = "slurm-wrapper"
+version = "0.1.0"
+description = "Simple CLI wrapper for Slurm sbatch."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+sb = "slurm_wrapper:main"
+
+[tool.setuptools]
+py-modules = ["slurm_wrapper"]

@@ -1,0 +1,8 @@
+README.md
+pyproject.toml
+slurm_wrapper.py
+slurm_wrapper.egg-info/PKG-INFO
+slurm_wrapper.egg-info/SOURCES.txt
+slurm_wrapper.egg-info/dependency_links.txt
+slurm_wrapper.egg-info/entry_points.txt
+slurm_wrapper.egg-info/top_level.txt

@@ -1,0 +1,27 @@
+# slurm-wrapper
+
+A simple CLI tool to generate and submit Slurm sbatch scripts from the command line.
+
+## Installation
+
+```bash
+pip install git+https://github.com/yourusername/slurm-wrapper.git
+```
+
+## Usage
+
+```bash
+sb --num_gpus=4 --job_name=test --mem=32G python train.py --epochs 10
+```
+
+This will generate a temporary sbatch script and submit it with your specified options.
+
+### Options
+- `--num_gpus`: Number of GPUs (default: 1)
+- `--ntasks`: Number of tasks (default: 1)
+- `--cpus_per_task`: CPUs per task (default: 4)
+- `--mem`: Memory per node (default: 16G)
+- `--job_name`: Job name (default: job)
+- `--output`: Output file (default: slurm-%j.out)
+- `--extra`: Extra SBATCH lines (default: '')
+- Any command after the options will be run by the job script.
