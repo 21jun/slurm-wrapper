@@ -24,7 +24,42 @@ export OMP_NUM_THREADS={cpus_per_task}
 {command}
 """
 
+def check_update():
+    import requests
+    import subprocess
+    import sys
+    import os
+    GITHUB_REPO = "21jun/slurm-wrapper"  # Change to your repo if needed
+    API_URL = f"https://api.github.com/repos/{GITHUB_REPO}/releases/latest"
+    try:
+        resp = requests.get(API_URL, timeout=5)
+        resp.raise_for_status()
+        latest = resp.json()["tag_name"]
+    except Exception as e:
+        print(f"Could not check for updates: {e}")
+        sys.exit(1)
+    # Get current version from pyproject.toml
+    import toml
+    try:
+        with open("pyproject.toml") as f:
+            current = toml.load(f)["project"]["version"]
+    except Exception:
+        print("Could not determine current version.")
+        sys.exit(1)
+    if latest.lstrip('v') == current:
+        print(f"You are already using the latest version: {current}")
+        return
+    print(f"Updating from {current} to {latest}...")
+    # Pull and install latest from GitHub
+    repo_url = f"git+https://github.com/{GITHUB_REPO}.git@{latest}"
+    subprocess.run([sys.executable, "-m", "pip", "install", repo_url], check=True)
+    print("Update complete.")
+    sys.exit(0)
+
 def main():
+    if len(sys.argv) > 1 and sys.argv[1] == "update":
+        check_update()
+
     parser = argparse.ArgumentParser(description="Slurm sbatch wrapper.")
     parser.add_argument('--num_gpus', type=int, default=1, help='Number of GPUs')
     parser.add_argument('--ntasks', type=int, default=1, help='Number of tasks')
